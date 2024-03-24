@@ -15,5 +15,5 @@ try:
 except IndexError:
     user_type = UserType.USER_A
 
-user = User('COM3_191703_Paweł_Rzepecki (1).pdf', user_type)
+user = User('COM3_191703_Paweł_Rzepecki.pdf', user_type)
 user.sign_doc(RSA_KEY, password=KEY_PIN)

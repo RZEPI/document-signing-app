@@ -1,7 +1,7 @@
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 
-FILE_NAME = "private_key.pem"
+FILE_NAME = "files\\private_key.pem"
 KEY_LEN = 4096
 
 private_key = rsa.generate_private_key(
