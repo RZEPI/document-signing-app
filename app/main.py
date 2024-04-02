@@ -15,5 +15,10 @@ try:
 except IndexError:
     user_type = UserType.USER_A
 
-user = User('COM3_191703_Paweł_Rzepecki.pdf', user_type)
+user = User('RPI.pdf', user_type)
 user.sign_doc(RSA_KEY, password=KEY_PIN)
+is_doc_vaild = user.verify_signature()
+if is_doc_vaild:
+    print("Signature is valid")
+else:
+    print("Signature is invalid")

@@ -7,7 +7,13 @@ from datetime import datetime
 
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.primitives.serialization import load_pem_private_key
+from cryptography.hazmat.primitives.serialization import (
+    load_pem_private_key,
+    load_pem_public_key,
+    Encoding,
+    PublicFormat,
+)
+from cryptography.exceptions import InvalidSignature
 from cryptography.fernet import Fernet
 
 DEFAULT_USER_DATA = {
@@ -15,6 +21,8 @@ DEFAULT_USER_DATA = {
     "index": "Index not provided",
     "group": "Group not provided",
 }
+PUBLIC_KEY_FILE = "files\\public_key.pem"
+
 
 class UserType(Enum):
     USER_A = 1
@@ -30,6 +38,7 @@ class User:
     ):
         self.type = type
         self.file_name = file_name
+        self.file_data_path = f"files\\{file_name}_signature.xml"
         self.user_data = user_data
         with open(f"files\\{file_name}", "rb") as file:
             self.doc = file.read()
@@ -61,6 +70,7 @@ class User:
             hashes.SHA256(),
         )
         self._save_signature(signature)
+        self.store_public_key(private_key.public_key())
 
     def get_document_data(self):
         file_path = f"files\\{self.file_name}"
@@ -84,8 +94,22 @@ class User:
             User.create_xml_node(node, key, value)
         return node
 
+    @staticmethod
+    def store_public_key(public_key):
+        with open(PUBLIC_KEY_FILE, "wb") as file:
+            public_key_pem = public_key.public_bytes(
+                encoding=Encoding.PEM, format=PublicFormat.SubjectPublicKeyInfo
+            )
+            file.write(public_key_pem)
+
+    @staticmethod
+    def load_public_key():
+        with open(PUBLIC_KEY_FILE, "rb") as file:
+            public_key = load_pem_public_key(file.read())
+
+        return public_key
+
     def _save_signature(self, signature):
-        file_name = self.file_name + "_signature.xml"
         signature_xml = ElementTree.Element("signature")
         User.create_xml_node(
             signature_xml, "content", base64.b64encode(signature).decode("utf-8")
@@ -97,4 +121,22 @@ class User:
         )
 
         signature_tree = ElementTree.ElementTree(signature_xml)
-        signature_tree.write(f"files\\{file_name}")
+        signature_tree.write(self.file_data_path)
+
+    def verify_signature(self):
+        signature_file_tree = ElementTree.parse(self.file_data_path)
+        signature = base64.b64decode(signature_file_tree.find("content").text)
+        public_key = self.load_public_key()
+        try:
+            public_key.verify(
+                signature,
+                self.doc,
+                padding.PSS(
+                    mgf=padding.MGF1(hashes.SHA256()),
+                    salt_length=padding.PSS.MAX_LENGTH,
+                ),
+                hashes.SHA256(),
+            )
+            return True
+        except InvalidSignature:
+            return False
