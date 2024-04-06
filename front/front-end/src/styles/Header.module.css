@@ -1,0 +1,37 @@
+.main-header{
+    display: flex;
+    justify-content:center  ;
+    align-items: center;
+    margin: 0;
+    height: 5em;
+    width: 100%;
+    top:0;
+    left:0;
+    background: rgb(121,9,94);
+    background: linear-gradient(90deg, rgba(121,9,94,1) 0%, rgba(72,0,255,1) 100%);
+
+}
+.button_container
+{
+    height: 100%;
+}
+
+.button_container h2{
+    display: inline-block;
+    width: 30vh;
+    font-size: 1.7em;
+    margin:  0.5em 0;
+    padding: 0 1em 0.8em;
+    padding-bottom:0.8em;
+    color:#fff;
+}
+
+.active{
+    color:#c7c7c7;
+    border-bottom: 5px solid #c7c7c7;
+
+}
+.button_container h2:hover{
+    color:#b5b5b5;
+    border-bottom: 5px solid #b5b5b5;
+}

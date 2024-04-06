@@ -12,6 +12,8 @@ from cryptography.hazmat.primitives.serialization import (
     load_pem_public_key,
     Encoding,
     PublicFormat,
+    PrivateFormat,
+    NoEncryption,
 )
 from cryptography.exceptions import InvalidSignature
 from cryptography.fernet import Fernet
@@ -43,44 +45,6 @@ class User:
         with open(f"files\\{file_name}", "rb") as file:
             self.doc = file.read()
 
-    def encrypt_doc(self, private_key_pem):
-        fernet = Fernet(private_key_pem)
-        encrypted_doc = fernet.encrypt(self.doc.encode("utf-8"))
-
-        return encrypted_doc
-
-    def decrypt_doc(self, private_key_pem):
-        fernet = Fernet(private_key_pem)
-        decrypted_doc = fernet.decrypt(self.doc)
-
-        return decrypted_doc
-
-    def sign_doc(self, private_key_file, password=None):
-        if self.type == UserType.USER_B:
-            raise Exception("User B cannot sign doc")
-
-        with open(private_key_file, "rb") as file:
-            private_key = load_pem_private_key(file.read(), password=password)
-
-        signature = private_key.sign(
-            self.doc,
-            padding.PSS(
-                mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.MAX_LENGTH
-            ),
-            hashes.SHA256(),
-        )
-        self._save_signature(signature)
-        self.store_public_key(private_key.public_key())
-
-    def get_document_data(self):
-        file_path = f"files\\{self.file_name}"
-        size = os.path.getsize(file_path)
-        extension = os.path.splitext(self.file_name)[-1]
-        mod_date_timestamp = os.path.getmtime(file_path)
-        mod_date = datetime.fromtimestamp(mod_date_timestamp).isoformat()
-
-        return {"size": size, "extension": extension, "mod_date": mod_date}
-
     @staticmethod
     def create_xml_node(parent_node, node_name, node_value):
         node = ElementTree.SubElement(parent_node, node_name)
@@ -108,6 +72,38 @@ class User:
             public_key = load_pem_public_key(file.read())
 
         return public_key
+
+    @staticmethod
+    def load_private_key(private_key_file, password=None):
+        with open(private_key_file, "rb") as file:
+            private_key = load_pem_private_key(file.read(), password=password)
+
+        return private_key
+
+    def sign_doc(self, private_key_file, password=None):
+        if self.type == UserType.USER_B:
+            raise Exception("User B cannot sign doc")
+
+        private_key = self.load_private_key(private_key_file, password=password)
+
+        signature = private_key.sign(
+            self.doc,
+            padding.PSS(
+                mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.MAX_LENGTH
+            ),
+            hashes.SHA256(),
+        )
+        self._save_signature(signature)
+        self.store_public_key(private_key.public_key())
+
+    def get_document_data(self):
+        file_path = f"files\\{self.file_name}"
+        size = os.path.getsize(file_path)
+        extension = os.path.splitext(self.file_name)[-1]
+        mod_date_timestamp = os.path.getmtime(file_path)
+        mod_date = datetime.fromtimestamp(mod_date_timestamp).isoformat()
+
+        return {"size": size, "extension": extension, "mod_date": mod_date}
 
     def _save_signature(self, signature):
         signature_xml = ElementTree.Element("signature")
