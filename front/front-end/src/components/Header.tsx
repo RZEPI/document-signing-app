@@ -1,14 +1,18 @@
 import styles from "../styles/Header.module.css";
 import { UserType } from "../models/UserType";
 import { PanelType } from "../models/PanelType";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { AppDispatch } from "../store";
+import { setUserType, getUserType } from "../store/user-type";
 
-const Header: React.FC<{
-  currUserType: UserType;
-  onUserTypeChange: (userType: UserType) => void;
-}> = ({ currUserType, onUserTypeChange }) => {
+
+const Header: React.FC = () => {
   function userTypeChangeHandler(userType: UserType) {
-    onUserTypeChange(userType);
+    dispatch(setUserType(userType));
   }
+
+  var dispatch: AppDispatch = useAppDispatch();
+  var currUserType: UserType = useAppSelector(getUserType);
 
   var panelsData: PanelType[] = [
     { name: "User A", type: UserType.User_a },

@@ -1,3 +1,6 @@
+import { useAppSelector } from "../store/hooks";
+import { getUserType } from "../store/user-type";
+
 import styles from "../styles/UserData.module.css";
 import { UserType } from "../models/UserType";
 import FileInput from "./FileInput";
@@ -5,8 +8,10 @@ import PendriveUnlock from "./PendriveUnlock";
 import UserData from "./UserData";
 import SignButton from "./SignButton";
 
-const UserPanel: React.FC<{ userType: UserType }> = ({ userType }) => {
-    if (userType === UserType.User_a) {
+
+const UserPanel: React.FC = () => {
+    var currUserType: UserType = useAppSelector(getUserType);
+    if (currUserType === UserType.User_a) {
         return (
             <div>
                 <h1 className={styles["user-name"]}>User A</h1>
