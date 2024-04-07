@@ -7,18 +7,29 @@ import FileInput from "./FileInput";
 import PendriveUnlock from "./PendriveUnlock";
 import UserData from "./UserData";
 import SignButton from "./SignButton";
+import { Stage } from "../models/Stage";
+import { getStage } from "../store/stage";
 
 
 const UserPanel: React.FC = () => {
     var currUserType: UserType = useAppSelector(getUserType);
+    var currStage: Stage = useAppSelector(getStage);
+
+    var currStageElement: JSX.Element = <SignButton />;
+
+    if (currStage === Stage.Users_data) {
+        currStageElement = <UserData />;
+    } else if (currStage === Stage.File_input) {
+        currStageElement = <FileInput />;
+    } else if(currStage === Stage.Pin){
+        currStageElement = <PendriveUnlock />;
+    }
+
     if (currUserType === UserType.User_a) {
         return (
             <div>
                 <h1 className={styles["user-name"]}>User A</h1>
-                <UserData/>
-                <FileInput />
-                <PendriveUnlock />
-                <SignButton />
+                {currStageElement}
             </div>
         );
     }else{
