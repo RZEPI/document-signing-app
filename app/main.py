@@ -1,7 +1,7 @@
 from sys import argv
 
 from user import User, UserType
-from constants import PRIVATE_KEY_FILE
+from constants import PRIVATE_KEY_FILE, ConvertionType
 
 KEY_PIN = b"2001"
 
@@ -21,7 +21,7 @@ if is_doc_vaild:
 else:
     print("Signature is invalid")
 
-encrypted_file = user.encrypt_file("files\\RPI.pdf")
+encrypted_file = user.crypto_convert_file("files\\RPI.pdf")
 print(f"Encrypted file saved to{encrypted_file}")
-user.decrypt_file(encrypted_file)
-print(f"Decrypted file saved to{encrypted_file.replace('.encrypted', '')}")
+decrypted_file = user.crypto_convert_file(encrypted_file, ConvertionType.DECRYPT)
+print(f"Decrypted file saved to{decrypted_file}")

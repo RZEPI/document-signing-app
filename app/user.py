@@ -18,7 +18,7 @@ from cryptography.hazmat.primitives.serialization import (
 from cryptography.exceptions import InvalidSignature
 from cryptography.fernet import Fernet
 
-from constants import DEFAULT_USER_DATA, PUBLIC_KEY_FILE, FERNET_FILE
+from constants import DEFAULT_USER_DATA, PUBLIC_KEY_FILE, FERNET_FILE, ConvertionType
 
 
 class UserType(Enum):
@@ -92,32 +92,20 @@ class User:
         return User.load_file_content(FERNET_FILE)
 
     @staticmethod
-    def encrypt_file(file_path):
+    def crypto_convert_file(file_path, cypher_type=ConvertionType.ENCRYPT):
         fernet_key = User.load_fernet_key()
         fernet = Fernet(fernet_key)
 
         file_content = User.load_file_content(file_path)
-        
-        encrypted_file = fernet.encrypt(file_content)
-        encrypted_file_path = file_path + ".encrypted"
+        if cypher_type == ConvertionType.ENCRYPT:
+            file_content = fernet.encrypt(file_content)
+            new_file_path = file_path + ".encrypted"
+        else:
+            file_content = fernet.decrypt(file_content)
+            new_file_path = file_path.replace(".encrypted", "")
 
-        User.store_file_content(encrypted_file_path, encrypted_file)
-
-        return encrypted_file_path
-
-    @staticmethod
-    def decrypt_file(file_path):
-        fernet_key = User.load_fernet_key()
-        fernet = Fernet(fernet_key)
-        with open(file_path, "rb") as file:
-            file_content = file.read()
-        
-        decrypted_file = fernet.decrypt(file_content)
-
-        with open(file_path.replace(".encrypted", ""), "wb") as file:
-            file.write(decrypted_file)
-
-        return decrypted_file
+        User.store_file_content(new_file_path, file_content)
+        return new_file_path
 
     def sign_doc(self, private_key_file, password=None):
         if self.type == UserType.USER_B:
