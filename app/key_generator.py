@@ -1,8 +1,9 @@
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.fernet import Fernet
 
-FILE_NAME = "files\\private_key.pem"
-KEY_LEN = 4096
+from constants import PRIVATE_KEY_FILE, FERNET_FILE, KEY_LEN
+
 
 private_key = rsa.generate_private_key(
     public_exponent=65537,
@@ -15,7 +16,12 @@ private_key_pem = private_key.private_bytes(
     encryption_algorithm=serialization.BestAvailableEncryption(b"2001")
 )
 
-with open(FILE_NAME, 'wb') as file:
+fernet_key = Fernet.generate_key()
+
+with open(FERNET_FILE, 'wb') as file:
+    file.write(fernet_key)
+
+with open(PRIVATE_KEY_FILE, 'wb') as file:
     file.write(private_key_pem)
 
-print(f"Private key saved to {FILE_NAME}")
+print(f"Private key saved to {PRIVATE_KEY_FILE}")

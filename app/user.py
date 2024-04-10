@@ -18,12 +18,7 @@ from cryptography.hazmat.primitives.serialization import (
 from cryptography.exceptions import InvalidSignature
 from cryptography.fernet import Fernet
 
-DEFAULT_USER_DATA = {
-    "name": "User not provided",
-    "index": "Index not provided",
-    "group": "Group not provided",
-}
-PUBLIC_KEY_FILE = "files\\public_key.pem"
+from constants import DEFAULT_USER_DATA, PUBLIC_KEY_FILE, FERNET_FILE
 
 
 class UserType(Enum):
@@ -79,6 +74,50 @@ class User:
             private_key = load_pem_private_key(file.read(), password=password)
 
         return private_key
+
+    @staticmethod
+    def load_file_content(file_path):
+        with open(file_path, "rb") as file:
+            file_content = file.read()
+
+        return file_content
+
+    @staticmethod
+    def store_file_content(file_path, content):
+        with open(file_path, "wb") as file:
+            file.write(content)
+
+    @staticmethod
+    def load_fernet_key():
+        return User.load_file_content(FERNET_FILE)
+
+    @staticmethod
+    def encrypt_file(file_path):
+        fernet_key = User.load_fernet_key()
+        fernet = Fernet(fernet_key)
+
+        file_content = User.load_file_content(file_path)
+        
+        encrypted_file = fernet.encrypt(file_content)
+        encrypted_file_path = file_path + ".encrypted"
+
+        User.store_file_content(encrypted_file_path, encrypted_file)
+
+        return encrypted_file_path
+
+    @staticmethod
+    def decrypt_file(file_path):
+        fernet_key = User.load_fernet_key()
+        fernet = Fernet(fernet_key)
+        with open(file_path, "rb") as file:
+            file_content = file.read()
+        
+        decrypted_file = fernet.decrypt(file_content)
+
+        with open(file_path.replace(".encrypted", ""), "wb") as file:
+            file.write(decrypted_file)
+
+        return decrypted_file
 
     def sign_doc(self, private_key_file, password=None):
         if self.type == UserType.USER_B:
