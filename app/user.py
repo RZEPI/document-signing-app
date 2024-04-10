@@ -18,7 +18,7 @@ from cryptography.hazmat.primitives.serialization import (
 from cryptography.exceptions import InvalidSignature
 from cryptography.fernet import Fernet
 
-from constants import DEFAULT_USER_DATA, PUBLIC_KEY_FILE, FERNET_FILE, ConvertionType
+from constants import DEFAULT_USER_DATA, PUBLIC_KEY_FILE, FERNET_FILE, STORAGE_PATH, ConvertionType
 
 
 class UserType(Enum):
@@ -35,9 +35,9 @@ class User:
     ):
         self.type = type
         self.file_name = file_name
-        self.file_data_path = f"files\\{file_name}_signature.xml"
+        self.file_data_path = f"{STORAGE_PATH}{file_name}_signature.xml"
         self.user_data = user_data
-        with open(f"files\\{file_name}", "rb") as file:
+        with open(f"{STORAGE_PATH}{file_name}", "rb") as file:
             self.doc = file.read()
 
     @staticmethod
@@ -124,7 +124,7 @@ class User:
         self.store_public_key(private_key.public_key())
 
     def get_document_data(self):
-        file_path = f"files\\{self.file_name}"
+        file_path = f"{STORAGE_PATH}{self.file_name}"
         size = os.path.getsize(file_path)
         extension = os.path.splitext(self.file_name)[-1]
         mod_date_timestamp = os.path.getmtime(file_path)
