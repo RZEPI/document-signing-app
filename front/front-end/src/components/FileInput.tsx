@@ -1,8 +1,7 @@
 import {useState} from "react";
 
+import FileIcon from "./FileIcon";
 import styles from "../styles/FileInput.module.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFile } from "@fortawesome/free-solid-svg-icons";
 import { useAppDispatch } from "../store/hooks";
 import { setNextStage } from "../store/stage";
 
@@ -41,8 +40,7 @@ const FileInput: React.FC = () => {
         />
         <label htmlFor="file">Upload file</label>
         {file && <div className={styles["file-preview"]}>
-        <FontAwesomeIcon icon={faFile} />
-        <span>{file.name}</span>
+        <FileIcon filename={file.name} />
       </div>}
         {file && <button type="submit" className={styles["submit-button"]}>Submit</button>}
       </form>

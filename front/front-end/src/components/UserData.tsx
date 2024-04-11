@@ -47,8 +47,7 @@ const UserData: React.FC = () => {
   function changeHandler(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     var name: string = e.target.name;
     var value: string | number = e.target.value;
-    console.log(name, value);
-   
+
     setUserDataInputs({...userDataInputs, [name]: value});
     setErrors({...errors, [name]: ""});
   }

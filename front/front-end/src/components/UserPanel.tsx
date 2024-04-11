@@ -6,7 +6,7 @@ import { UserType } from "../models/UserType";
 import FileInput from "./FileInput";
 import PendriveUnlock from "./PendriveUnlock";
 import UserData from "./UserData";
-import SignButton from "./SignButton";
+import SubmitionPage from "./SubmitionPage";
 import { Stage } from "../models/Stage";
 import { getStage } from "../store/stage";
 
@@ -15,7 +15,7 @@ const UserPanel: React.FC = () => {
     var currUserType: UserType = useAppSelector(getUserType);
     var currStage: Stage = useAppSelector(getStage);
 
-    var currStageElement: JSX.Element = <SignButton />;
+    var currStageElement: JSX.Element = <SubmitionPage />;
 
     if (currStage === Stage.Users_data) {
         currStageElement = <UserData />;
