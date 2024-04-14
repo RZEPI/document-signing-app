@@ -25,18 +25,30 @@ class UserType(Enum):
 
 
 class User:
+    file_name = None
+
     def __init__(
         self,
-        file_name,
         type=UserType.USER_A,
         user_data=DEFAULT_USER_DATA,
     ):
         self.type = type
+        self.user_data = user_data
+
+    def set_doc(self, file_name):
         self.file_name = file_name
         self.file_data_path = f"{STORAGE_PATH}{file_name}_signature.xml"
-        self.user_data = user_data
         with open(f"{STORAGE_PATH}{file_name}", "rb") as file:
             self.doc = file.read()
+
+    def check_file(method):
+        def wrapper(self, *args, **kwargs):
+            if not self.file_name:
+                raise Exception("No file provided")
+        
+            ret_val = method(self, *args, **kwargs)
+            return ret_val
+        return wrapper
 
     @staticmethod
     def create_xml_node(parent_node, node_name, node_value):
@@ -105,9 +117,12 @@ class User:
         User.store_file_content(new_file_path, file_content)
         return new_file_path
 
+    @check_file
     def sign_doc(self, private_key_file, password=None):
         if self.type == UserType.USER_B:
             raise Exception("User B cannot sign doc")
+        if not self.file_name:
+            raise Exception("No file provided")
 
         private_key = self.load_private_key(private_key_file, password=password)
 
@@ -121,6 +136,7 @@ class User:
         self._save_signature(signature)
         self.store_public_key(private_key.public_key())
 
+    @check_file
     def get_document_data(self):
         file_path = f"{STORAGE_PATH}{self.file_name}"
         size = os.path.getsize(file_path)
@@ -130,6 +146,7 @@ class User:
 
         return {"size": size, "extension": extension, "mod_date": mod_date}
 
+    @check_file
     def _save_signature(self, signature):
         signature_xml = ElementTree.Element("signature")
         User.create_xml_node(
@@ -144,6 +161,7 @@ class User:
         signature_tree = ElementTree.ElementTree(signature_xml)
         signature_tree.write(self.file_data_path)
 
+    @check_file
     def verify_signature(self):
         signature_file_tree = ElementTree.parse(self.file_data_path)
         signature = base64.b64decode(signature_file_tree.find("content").text)

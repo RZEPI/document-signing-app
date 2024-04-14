@@ -1,0 +1,19 @@
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.download-button
+{
+    align-self: center;
+    font-size: 2.3em;
+    color:#fff;
+    padding: 0.4em;
+    width: 10vw;
+    border-radius: 0.6em;
+    border: 2px solid #000; 
+    background: rgb(121,9,94);
+    background: linear-gradient(90deg, rgba(121,9,94,1) 0%, rgba(72,0,255,1) 100%);
+}

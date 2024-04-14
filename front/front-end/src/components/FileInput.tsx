@@ -4,6 +4,7 @@ import FileIcon from "./FileIcon";
 import styles from "../styles/FileInput.module.css";
 import { useAppDispatch } from "../store/hooks";
 import { setNextStage } from "../store/stage";
+import { setFile as setFileToStore } from "../store/file";
 
 const FileInput: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -19,6 +20,7 @@ const FileInput: React.FC = () => {
     e.preventDefault();
     if(file)
     {
+        dispatch(setFileToStore(file));
         dispatch(setNextStage())
     }
   }
@@ -40,7 +42,7 @@ const FileInput: React.FC = () => {
         />
         <label htmlFor="file">Upload file</label>
         {file && <div className={styles["file-preview"]}>
-        <FileIcon filename={file.name} />
+        <FileIcon file_name={file.name} />
       </div>}
         {file && <button type="submit" className={styles["submit-button"]}>Submit</button>}
       </form>

@@ -21,6 +21,8 @@ const stageSlice = createSlice({
         state.stage = Stage.File_input;
       } else if (state.stage === Stage.File_input) {
         state.stage = Stage.Submit;
+      }else if (state.stage === Stage.Submit) {
+        state.stage = Stage.Download;
       }
     },
   },

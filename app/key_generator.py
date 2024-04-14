@@ -2,7 +2,7 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.fernet import Fernet
 
-from constants import PRIVATE_KEY_FILE, FERNET_FILE, KEY_LEN
+from constants import PRIVATE_KEY_FILE, FERNET_FILE, KEY_LEN, KEY_PIN
 
 
 private_key = rsa.generate_private_key(
@@ -13,7 +13,7 @@ private_key = rsa.generate_private_key(
 private_key_pem = private_key.private_bytes(
     encoding=serialization.Encoding.PEM,
     format=serialization.PrivateFormat.PKCS8,
-    encryption_algorithm=serialization.BestAvailableEncryption(b"2001")
+    encryption_algorithm=serialization.BestAvailableEncryption(KEY_PIN)
 )
 
 fernet_key = Fernet.generate_key()

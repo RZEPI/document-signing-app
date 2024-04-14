@@ -9,13 +9,14 @@ import UserData from "./UserData";
 import SubmitionPage from "./SubmitionPage";
 import { Stage } from "../models/Stage";
 import { getStage } from "../store/stage";
+import DownloadPage from "./DownloadPage";
 
 
 const UserPanel: React.FC = () => {
     var currUserType: UserType = useAppSelector(getUserType);
     var currStage: Stage = useAppSelector(getStage);
 
-    var currStageElement: JSX.Element = <SubmitionPage />;
+    var currStageElement: JSX.Element = <DownloadPage />;
 
     if (currStage === Stage.Users_data) {
         currStageElement = <UserData />;
@@ -23,6 +24,8 @@ const UserPanel: React.FC = () => {
         currStageElement = <FileInput />;
     } else if(currStage === Stage.Pin){
         currStageElement = <PendriveUnlock />;
+    }else if(currStage === Stage.Submit){
+        currStageElement = <SubmitionPage />;
     }
 
     if (currUserType === UserType.User_a) {

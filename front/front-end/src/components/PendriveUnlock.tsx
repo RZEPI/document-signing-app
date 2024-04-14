@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import UserForm from "./UserForm";
+import { verify_pin } from "../util/http";
 import { useAppDispatch } from "../store/hooks";
 import { setNextStage } from "../store/stage";
 import Input from "./form inputs/Input";
@@ -8,10 +9,13 @@ import Input from "./form inputs/Input";
 const PendriveUnlock: React.FC = () => {
   const [error, setError] = useState<string>("");
   const dispatch = useAppDispatch();
-  function submitHandler(e: React.FormEvent<HTMLFormElement>) {
+  async function submitHandler(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    if (e.currentTarget.pin.value === "1234") {
+    const pin:number = e.currentTarget.pin.value;
+    const response: boolean = await verify_pin(pin);
+
+    if (response) {
       dispatch(setNextStage());
     } else {
       setError("Invalid PIN");
