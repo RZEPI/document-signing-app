@@ -17,3 +17,9 @@
     background: rgb(121,9,94);
     background: linear-gradient(90deg, rgba(121,9,94,1) 0%, rgba(72,0,255,1) 100%);
 }
+
+.download-button:hover
+{
+    background: rgb(72,0,255);
+    background: linear-gradient(90deg, rgba(72,0,255,1) 0%, rgba(121,9,94,1) 100%);
+}

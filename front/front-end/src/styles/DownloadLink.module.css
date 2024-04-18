@@ -1,0 +1,16 @@
+.download-link {
+  width: 93%;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  color: #000;
+  text-decoration: none;
+  border-radius: 0.6em;
+}
+
+.download-link:hover {
+  background: #f0f0f0;
+  border-radius: 0.6em;
+}

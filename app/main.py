@@ -1,5 +1,5 @@
 from sys import argv
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 
 from user import User, UserType
@@ -52,6 +52,14 @@ def sign_doc():
     except Exception as e:
         return jsonify({"message": str(e)}), 400
 
+
+@app.route("/download/signed", methods=["GET"])
+def download_signed_doc():
+    return send_file(user.file_path, as_attachment=True)
+
+@app.route("/download/xml", methods=["GET"])
+def download_xml():
+    return send_file(user.file_data_path, as_attachment=True)
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

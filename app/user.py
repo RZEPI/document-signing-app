@@ -37,8 +37,9 @@ class User:
 
     def set_doc(self, file_name):
         self.file_name = file_name
+        self.file_path = f"{STORAGE_PATH}{file_name}"
         self.file_data_path = f"{STORAGE_PATH}{file_name}_signature.xml"
-        with open(f"{STORAGE_PATH}{file_name}", "rb") as file:
+        with open(self.file_path, "rb") as file:
             self.doc = file.read()
 
     def check_file(method):
@@ -138,13 +139,12 @@ class User:
 
     @check_file
     def get_document_data(self):
-        file_path = f"{STORAGE_PATH}{self.file_name}"
-        size = os.path.getsize(file_path)
+        size = os.path.getsize(self.file_path)
         extension = os.path.splitext(self.file_name)[-1]
-        mod_date_timestamp = os.path.getmtime(file_path)
+        mod_date_timestamp = os.path.getmtime(self.file_path)
         mod_date = datetime.fromtimestamp(mod_date_timestamp).isoformat()
 
-        return {"size": size, "extension": extension, "mod_date": mod_date}
+        return {"size": size, "extension": extension, "mod_date": mod_date, "name": self.file_name}
 
     @check_file
     def _save_signature(self, signature):

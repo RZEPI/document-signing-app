@@ -1,29 +1,29 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import { download_files } from "../util/http";
 
 import styles from "../styles/DownloadPage.module.css";
 import PreviewBox from "./PreviewBox";
+import DownloadLink from "./DownloadLink";
 
 const DownloadPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [files, setFiles] = useState<Blob[] | null>(null);
 
-    function downloadFile(){
+    useEffect(() => {
         setIsLoading(true);
         download_files().then((response) => {
             setFiles(response);
         });
         setIsLoading(false);
-    }
+      }, [files, setFiles]);
   return (
     <div className={styles["main-container"]}>
       <PreviewBox header="Download signed file">
         {isLoading && <p>Loading...</p>}
         {files && <>
-            <a href={URL.createObjectURL(files[0])} download="signed.pdf">Signed document</a>
-            <a href={URL.createObjectURL(files[1])} download="document.xml">XML file</a>
+          <DownloadLink url={URL.createObjectURL(files[0])} caption="Signed document" download="signed.pdf" />
+          <DownloadLink url={URL.createObjectURL(files[1])} caption="XML file" download="document.xml" />
         </>}
-        {!files && <button onClick={downloadFile} className={styles["download-button"]}>Download</button>}
       </PreviewBox>
     </div>
   );
