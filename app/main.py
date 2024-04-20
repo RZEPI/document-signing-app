@@ -61,6 +61,26 @@ def download_signed_doc():
 def download_xml():
     return send_file(user.file_data_path, as_attachment=True)
 
+@app.route("/verify", methods=["POST"])
+def verify_signature():
+    file_xml = request.files["xml"]
+    file_doc = request.files["doc"]
+
+    if file_xml and file_doc:
+        file_xml.save(f"{STORAGE_PATH}{file_xml.filename}")
+        file_doc.save(f"{STORAGE_PATH}{file_doc.filename}")
+        user.set_doc(file_doc.filename)
+
+        is_doc_vaild = user.verify_signature()
+    else:
+        return jsonify({"message": "No files provided"}), 400
+
+
+    if is_doc_vaild:
+        return jsonify({"message": "Signature is valid"}), 200
+    else:
+        return jsonify({"message": "Signature is invalid"}), 400
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
 

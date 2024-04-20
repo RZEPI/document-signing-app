@@ -11,12 +11,20 @@
     background: linear-gradient(90deg, rgba(121,9,94,1) 0%, rgba(72,0,255,1) 100%);
 
 }
+.main-side-button
+{
+    position: absolute;
+    left: 1em;
+    top: 0.6em;
+}
+
 .button_container
 {
     height: 100%;
 }
 
 .button_container h2{
+    text-align: center;
     display: inline-block;
     width: 30vh;
     font-size: 1.7em;

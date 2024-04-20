@@ -1,5 +1,6 @@
 .download-link {
-  width: 93%;
+  width: calc(98%-0.5em);
+  padding: 0.5em;
   font-weight: 500;
   display: flex;
   justify-content: space-between;
@@ -12,5 +13,4 @@
 
 .download-link:hover {
   background: #f0f0f0;
-  border-radius: 0.6em;
 }

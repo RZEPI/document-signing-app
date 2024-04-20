@@ -1,19 +1,20 @@
+import { useNavigate } from "react-router-dom";
+
 import styles from "../styles/SubmitionPage.module.css";
-import PreviewBox from "./PreviewBox"
+import PreviewBox from "../components/PreviewBox"
 
 import { sign_file } from "../util/http";
-import { useAppSelector,useAppDispatch } from "../store/hooks";
+import { useAppSelector } from "../store/hooks";
 import { getUserData } from "../store/user-data";
-import { setNextStage } from "../store/stage";
 import { getFile } from "../store/file";
 import { UserDataType } from "../models/UserDataType";
-import FileIcon from "./FileIcon";
+import FileIcon from "../components/FileIcon";
 
 
 const SubmitionPage: React.FC = () => {
+  const navigation = useNavigate();
   const userData: UserDataType = useAppSelector(getUserData);
   const fileProvided: File | null = useAppSelector(getFile); 
-  const dispatch = useAppDispatch();
   function handleButtonClick() {
     const formData: FormData = new FormData();
     formData.append("file", fileProvided!, (fileProvided!)?.name);
@@ -23,10 +24,9 @@ const SubmitionPage: React.FC = () => {
       if(response === "Error occured while uploading file.")
         alert("Error occured while uploading file.");
       else
-        alert("File signed successfully.");
+        navigation("/sign/download");
     });
 
-    dispatch(setNextStage());
   }
 
 

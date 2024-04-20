@@ -8,14 +8,14 @@ const DownloadLink: React.FC<{
   caption: string;
   download: string;
 }> = ({ url, caption, download }) => {
-
   return (
-    <a className={styles["download-link"]} href={url} download={download}>
-      
+    <div style={{width: "100%", padding:0}}>
+      <a className={styles["download-link"]} href={url} download={download}>
         <span>{caption}</span>
-      
-      <FontAwesomeIcon icon={faFloppyDisk} />
-    </a>
+
+        <FontAwesomeIcon icon={faFloppyDisk} />
+      </a>
+    </div>
   );
 };
 

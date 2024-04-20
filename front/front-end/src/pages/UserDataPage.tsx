@@ -1,17 +1,18 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import styles from "../styles/UserForm.module.css";
-import UserForm from "./UserForm";
+import UserForm from "../components/UserForm";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
 import { getUserData, setUserData } from "../store/user-data";
-import { setNextStage } from "../store/stage";
 import { UserDataError } from "../models/UserDataError";
 import { UserDataType } from "../models/UserDataType";
-import Input from "./form inputs/Input";
-import Select from "./form inputs/Select";
+import Input from "../components/form inputs/Input";
+import Select from "../components/form inputs/Select";
 
-const UserData: React.FC = () => {
+const UserDataPage: React.FC = () => {
   var dispatch = useAppDispatch();
+  const navigation = useNavigate();
   var userData = useAppSelector(getUserData);
   const [errors, setErrors] = useState<UserDataError>(new UserDataError());
   const [userDataInputs, setUserDataInputs] = useState<UserDataType>(userData);
@@ -39,7 +40,7 @@ const UserData: React.FC = () => {
     if(errors.name === "" && errors.index === "" && errors.group === "")
     {
       dispatch(setUserData({name: name ?? '', index: index ?? 0, group: group ?? 1}));
-      dispatch(setNextStage());
+      navigation("/sign/file");
     }else
       return;
   }
@@ -65,4 +66,4 @@ const UserData: React.FC = () => {
   );
 };
 
-export default UserData;
+export default UserDataPage;

@@ -162,8 +162,11 @@ class User:
         signature_tree.write(self.file_data_path)
 
     @check_file
-    def verify_signature(self):
-        signature_file_tree = ElementTree.parse(self.file_data_path)
+    def verify_signature(self, file_data_path=None):
+        if not file_data_path:
+            signature_file_tree = ElementTree.parse(self.file_data_path)
+        else:
+            signature_file_tree = ElementTree.parse(file_data_path)
         signature = base64.b64decode(signature_file_tree.find("content").text)
         public_key = self.load_public_key()
         try:

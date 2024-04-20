@@ -1,4 +1,8 @@
+import { Link } from "react-router-dom";
+
 import styles from "../styles/Header.module.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHouse } from "@fortawesome/free-solid-svg-icons";
 import { UserType } from "../models/UserType";
 import { PanelType } from "../models/PanelType";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
@@ -31,6 +35,7 @@ const Header: React.FC = () => {
 
   return (
     <header className={styles["main-header"]}>
+      <Link to="/"><FontAwesomeIcon icon={faHouse} style={{color:'#fff', fontSize:"2em"}} className={styles["main-side-button"]} /></Link>
       <div className={styles["button_container"]}>{panels}</div>
     </header>
   );

@@ -1,14 +1,12 @@
 import { useState } from "react";
-
-import UserForm from "./UserForm";
+import UserForm from "../components/UserForm";
 import { verify_pin } from "../util/http";
-import { useAppDispatch } from "../store/hooks";
-import { setNextStage } from "../store/stage";
-import Input from "./form inputs/Input";
+import Input from "../components/form inputs/Input";
+import { useNavigate } from "react-router-dom";
 
-const PendriveUnlock: React.FC = () => {
+const PendriveUnlockPage: React.FC = () => {
   const [error, setError] = useState<string>("");
-  const dispatch = useAppDispatch();
+  const navigation = useNavigate();
   async function submitHandler(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
@@ -16,7 +14,7 @@ const PendriveUnlock: React.FC = () => {
     const response: boolean = await verify_pin(pin);
 
     if (response) {
-      dispatch(setNextStage());
+      navigation("/sign/data");
     } else {
       setError("Invalid PIN");
     }
@@ -42,4 +40,4 @@ const PendriveUnlock: React.FC = () => {
   );
 };
 
-export default PendriveUnlock;
+export default PendriveUnlockPage;
