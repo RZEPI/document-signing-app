@@ -5,7 +5,7 @@ import StartingPage from "./pages/StartingPage";
 import PendriveUnlockPage, {action as pinVerificationAction} from "./pages/PendriveUnlockPage";
 import UserDataPage, {action as UserDataSaveAction } from "./pages/UserDataPage";
 import FileInputPage from "./pages/FileInputPage";
-import SubmitionPage from "./pages/SubmitionPage";
+import SubmitionPage, {action as fileSigningAction} from "./pages/SubmitionPage";
 import DownloadPage, {loader as filesLoader } from "./pages/DownloadPage";
 import VerficationPage from "./pages/VerificationPage";
 
@@ -37,7 +37,8 @@ const router = createBrowserRouter([
           },
           {
             path: "submit",
-            element: <SubmitionPage />
+            element: <SubmitionPage />,
+            action: fileSigningAction
           },
           {
             path: "download",

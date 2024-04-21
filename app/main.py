@@ -1,3 +1,4 @@
+import json
 from sys import argv
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
@@ -28,29 +29,20 @@ def verify_pin():
     else:
         return jsonify({"message": "Pin is invalid"}), 401
 
-@app.route("/upload", methods=["POST"])
-def upload_file():
+@app.route("/sign", methods=["POST"])
+def sign_file():
     file = request.files["file"]
+    # user_data = request.form["userData"]
     if file:
         file_path = f"{STORAGE_PATH}{file.filename}"
         file.save(file_path)
         user.set_doc(file.filename)
-        return jsonify({"message": "File uploaded"}), 200
-    else:
-        return jsonify({"message": "No file provided"}), 400
-
-@app.route("/sign", methods=["POST"])
-def sign_doc():
-    request_body = request.json
-    user_data = request_body.get("userData")
-
-    try:
-        user.user_data = user_data
-        user.sign_doc(PRIVATE_KEY_FILE, password=KEY_PIN)
+        # user.user_data = user_data
+        # user.sign_doc(PRIVATE_KEY_FILE, password=KEY_PIN)
 
         return jsonify({"message": "Document signed"}), 200
-    except Exception as e:
-        return jsonify({"message": str(e)}), 400
+    else:
+        return jsonify({"message": "No file provided"}), 400
 
 
 @app.route("/download/signed", methods=["GET"])
@@ -83,17 +75,3 @@ def verify_signature():
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
-
-
-# user = User('RPI.pdf', user_type)
-# user.sign_doc(PRIVATE_KEY_FILE, password=KEY_PIN)
-# is_doc_vaild = user.verify_signature()
-# if is_doc_vaild:
-#     print("Signature is valid")
-# else:
-#     print("Signature is invalid")
-
-# encrypted_file = user.crypto_convert_file("files\\RPI.pdf")
-# print(f"Encrypted file saved to{encrypted_file}")
-# decrypted_file = user.crypto_convert_file(encrypted_file, ConvertionType.DECRYPT)
-# print(f"Decrypted file saved to{decrypted_file}")

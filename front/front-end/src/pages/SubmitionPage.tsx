@@ -1,9 +1,10 @@
-import { useNavigate } from "react-router-dom";
+import { ActionFunction, redirect, useSubmit, useNavigation } from "react-router-dom";
+import axios, {AxiosResponse} from "axios";
 
 import styles from "../styles/SubmitionPage.module.css";
 import PreviewBox from "../components/PreviewBox"
 
-import { sign_file } from "../util/http";
+import store from "../store/";
 import { useAppSelector } from "../store/hooks";
 import { getUserData } from "../store/user-data";
 import { getFile } from "../store/file";
@@ -12,21 +13,12 @@ import FileIcon from "../components/FileIcon";
 
 
 const SubmitionPage: React.FC = () => {
-  const navigation = useNavigate();
+  const isSending = useNavigation().state === "submitting";
+  const submit = useSubmit();
   const userData: UserDataType = useAppSelector(getUserData);
   const fileProvided: File | null = useAppSelector(getFile); 
   function handleButtonClick() {
-    const formData: FormData = new FormData();
-    formData.append("file", fileProvided!, (fileProvided!)?.name);
-    
-    const signedDocument = sign_file({userData}, formData);
-    signedDocument.then((response) => {
-      if(response === "Error occured while uploading file.")
-        alert("Error occured while uploading file.");
-      else
-        navigation("/sign/download");
-    });
-
+    submit(null, {method:"POST"});
   }
 
 
@@ -40,9 +32,33 @@ const SubmitionPage: React.FC = () => {
       <PreviewBox header="File for signing">
         <FileIcon file_name={fileProvided ? fileProvided.name : ""}/>
       </PreviewBox>
-      <button className={styles["sign-button"]} onClick={handleButtonClick}>Sign</button>
+      <button className={styles["sign-button"]} onClick={handleButtonClick} disabled={isSending}>{isSending ? "Sending..." : "Sign"}</button>
     </div>
   );
 };
 
 export default SubmitionPage;
+
+
+export const action: ActionFunction = async ()=>{
+  const formData = new FormData();
+  const file = store.getState().file;//workaround because useSubmit doesn't send formdata properly
+  const userData = store.getState().userData;
+
+  formData.append("file", file.file!, file.file!.name);
+  formData.append("userData", JSON.stringify(userData));
+  const response: AxiosResponse = await axios.post(
+    "http://localhost:5000/sign",
+    formData,
+    { 
+
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+  if(response.status === 200)
+    return redirect("/sign/download");
+  else
+    return response
+}

@@ -8,7 +8,7 @@ const StartingPage: React.FC = () => {
       <div className={styles["action-contaiener"]}>
         <LinkButton to="/sign/pin">Sign document</LinkButton>
         <LinkButton to="/verify/start">Verify document</LinkButton>
-        <LinkButton to="/">Download <br/> signed document</LinkButton>
+        <LinkButton to="/">Encrypt/Decrypt <br/> document</LinkButton>
       </div>
     </>
   );
