@@ -32,13 +32,13 @@ def verify_pin():
 @app.route("/sign", methods=["POST"])
 def sign_file():
     file = request.files["file"]
-    # user_data = request.form["userData"]
+    user_data = json.loads(request.form["userData"])
     if file:
         file_path = f"{STORAGE_PATH}{file.filename}"
         file.save(file_path)
         user.set_doc(file.filename)
-        # user.user_data = user_data
-        # user.sign_doc(PRIVATE_KEY_FILE, password=KEY_PIN)
+        user.user_data = user_data
+        user.sign_doc(PRIVATE_KEY_FILE, password=KEY_PIN)
 
         return jsonify({"message": "Document signed"}), 200
     else:

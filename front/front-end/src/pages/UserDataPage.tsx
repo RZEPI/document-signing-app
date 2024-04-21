@@ -88,7 +88,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   if (errors.name === "" && errors.index === "" && errors.group === "") {
     store.dispatch(
-      setUserData(userDataInputs)
+      setUserData({...userDataInputs})
     );
     return redirect("/sign/file");
   } else return errors;
