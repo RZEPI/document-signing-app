@@ -1,22 +1,19 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./index";
-import {UserDataType} from "../models/UserDataType";
+import { UserData } from "../models/UserData";
 
 
-const initialState: UserDataType = {
-    name: "",
-    index: 0,
-    group:1
-};
+const initialState: UserData = new UserData();
 
 const userDataSlice = createSlice({
     name: "userData",
     initialState,
     reducers: {
-        setUserData(state, action: PayloadAction<UserDataType>) {
+        setUserData(state, action: PayloadAction<UserData>) {
             state.name = action.payload.name;
             state.index = action.payload.index;
             state.group = action.payload.group;
+            return state;
         },
     },
 });

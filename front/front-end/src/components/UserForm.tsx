@@ -1,18 +1,16 @@
 import styles from "../styles/UserForm.module.css";
+import { Form } from "react-router-dom";
 
-const UserForm: React.FC<React.PropsWithChildren<{formTitle:string, buttonCaption:string, onSubmit: (e: React.FormEvent<HTMLFormElement>)=>void}>> = ({formTitle, buttonCaption, onSubmit, children}) => {
-  function submitHandler(e: React.FormEvent<HTMLFormElement>) {
-    onSubmit(e);
-  }
+const UserForm: React.FC<React.PropsWithChildren<{formTitle:string, buttonCaption:string, buttonBlocked:boolean}>> = ({formTitle, buttonCaption, buttonBlocked, children}) => {  
   return (
     <div className={styles["form-container"]}>
       <h1>{formTitle}</h1>
-      <form className={styles.form} onSubmit={submitHandler}>
+      <Form className={styles.form} method="post">
         {children}
         <div>
-          <button type="submit">{buttonCaption}</button>
+          <button type="submit" disabled={buttonBlocked}>{buttonCaption}</button>
         </div>
-      </form>
+      </Form>
     </div>
   );
 };

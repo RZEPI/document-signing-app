@@ -2,8 +2,8 @@ import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import PageLayout from "./pages/PageLayout";
 import StartingPage from "./pages/StartingPage";
-import PendriveUnlockPage from "./pages/PendriveUnlockPage";
-import UserDataPage from "./pages/UserDataPage";
+import PendriveUnlockPage, {action as pinVerificationAction} from "./pages/PendriveUnlockPage";
+import UserDataPage, {action as UserDataSaveAction } from "./pages/UserDataPage";
 import FileInputPage from "./pages/FileInputPage";
 import SubmitionPage from "./pages/SubmitionPage";
 import DownloadPage, {loader as filesLoader } from "./pages/DownloadPage";
@@ -24,10 +24,12 @@ const router = createBrowserRouter([
           {
             path: "pin",
             element: <PendriveUnlockPage />,
+            action: pinVerificationAction
           },
           {
             path: "data",
             element: <UserDataPage />,
+            action: UserDataSaveAction
           },
           {
             path: "file",

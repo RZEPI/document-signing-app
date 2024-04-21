@@ -2,7 +2,7 @@ const Select: React.FC<{options: number[], value:number, name:string, label:stri
     return (
         <>
         <label htmlFor={name}>{label}</label>
-        <select name={name} value={value}>
+        <select name={name} defaultValue={value}>
             {options.map((option) => (<option key={option} value={option}>{option}</option>))}
             {error && <span>{error}</span>}
         </select>

@@ -1,31 +1,24 @@
-import { useState } from "react";
 import UserForm from "../components/UserForm";
-import { verify_pin } from "../util/http";
 import Input from "../components/form inputs/Input";
-import { useNavigate } from "react-router-dom";
+import {
+  useNavigation,
+  useActionData,
+  ActionFunction,
+  json,
+  redirect,
+} from "react-router-dom";
 
 const PendriveUnlockPage: React.FC = () => {
-  const [error, setError] = useState<string>("");
-  const navigation = useNavigate();
-  async function submitHandler(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-
-    const pin:number = e.currentTarget.pin.value;
-    const response: boolean = await verify_pin(pin);
-
-    if (response) {
-      navigation("/sign/data");
-    } else {
-      setError("Invalid PIN");
-    }
-  }
+  const actionData = useActionData() as { message: string} | undefined;
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state === "submitting";
 
   return (
     <>
       <UserForm
         formTitle={"PIN"}
         buttonCaption="Unlock"
-        onSubmit={submitHandler}
+        buttonBlocked={isSubmitting}
       >
         <Input
           label="PIN"
@@ -33,7 +26,7 @@ const PendriveUnlockPage: React.FC = () => {
           name="pin"
           onChange={() => {}}
           value={undefined}
-          error={error}
+          error={actionData ? actionData?.message : ""}
         />
       </UserForm>
     </>
@@ -41,3 +34,19 @@ const PendriveUnlockPage: React.FC = () => {
 };
 
 export default PendriveUnlockPage;
+
+export const action: ActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+  const pin = formData.get("pin");
+
+  const response = await fetch("http://localhost:5000/pin", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ pin }),
+  });
+  if (response.status === 401) {
+    return await response.json();
+  }
+
+  return redirect("/sign/data");
+};

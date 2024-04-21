@@ -1,65 +1,65 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState,useEffect } from "react";
+import { ActionFunction, useNavigate, useNavigation, useActionData, redirect } from "react-router-dom";
 
 import styles from "../styles/UserForm.module.css";
 import UserForm from "../components/UserForm";
-import { useAppSelector, useAppDispatch } from "../store/hooks";
+import { useAppSelector } from "../store/hooks";
+import store from "../store";
 import { getUserData, setUserData } from "../store/user-data";
 import { UserDataError } from "../models/UserDataError";
 import { UserDataType } from "../models/UserDataType";
+import { UserData as UserDataClass } from "../models/UserData";
 import Input from "../components/form inputs/Input";
 import Select from "../components/form inputs/Select";
 
 const UserDataPage: React.FC = () => {
-  var dispatch = useAppDispatch();
-  const navigation = useNavigate();
-  var userData = useAppSelector(getUserData);
-  const [errors, setErrors] = useState<UserDataError>(new UserDataError());
-  const [userDataInputs, setUserDataInputs] = useState<UserDataType>(userData);
-  function submitHandler(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    var form: FormData = new FormData(e.currentTarget);
-    var name:string | undefined = form.get("name")?.toString();
-    if(name && name.trim() !== "")
-      setUserDataInputs({...userDataInputs, name: name ?? ''});
-    else
-      setErrors({...errors, name: "Name is required"});
+  var actionData = useActionData() as UserDataError | undefined;
+  const isSubmitting = useNavigation().state === "submitting";
+  const userData = useAppSelector(getUserData);
+  const [errors, setErrors] = useState<UserDataError>(actionData ?? new UserDataError());
+  const [userDataInputs, setUserDataInputs] = useState<UserDataType>({...userData});
 
-    var index: number | null = form.get("index") as number | null;
-    if(index && !(index < 99999 || index > 999999))
-      setUserDataInputs({...userDataInputs, index: index ?? 0});
-    else
-      setErrors({...errors, index: "Index out of range"});
+  useEffect(() => {
+    setErrors(actionData ?? new UserDataError());
+  }, [actionData, setErrors]);
 
-    var group:number | null = form.get("group") as number | null;
-    if( group && !(group < 1 || group > 5))
-      setUserDataInputs({...userDataInputs, group: group ?? 1});
-    else
-      setErrors({...errors, group: "Group out of range"});
-
-    if(errors.name === "" && errors.index === "" && errors.group === "")
-    {
-      dispatch(setUserData({name: name ?? '', index: index ?? 0, group: group ?? 1}));
-      navigation("/sign/file");
-    }else
-      return;
-  }
-
-  function changeHandler(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+  function changeHandler(
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) {
     var name: string = e.target.name;
     var value: string | number = e.target.value;
 
-    setUserDataInputs({...userDataInputs, [name]: value});
-    setErrors({...errors, [name]: ""});
+    setUserDataInputs({ ...userDataInputs, [name]: value });
+    setErrors({ ...errors, [name]: "" });
   }
 
   return (
     <div className={styles["form-container"]}>
-      <UserForm formTitle={"Your data"} buttonCaption={"Save"} onSubmit={submitHandler} >
-        <Input label="Name" type="text" name="name" onChange={changeHandler} value={userDataInputs.name} error={errors.name}/>
-        <Input label="Index" type="number" name="index" onChange={changeHandler} value={userDataInputs.index} error={errors.index}/>
+      <UserForm formTitle={"Your data"} buttonCaption={"Save"} buttonBlocked={isSubmitting}>
+        <Input
+          label="Name"
+          type="text"
+          name="name"
+          onChange={changeHandler}
+          value={userDataInputs.name}
+          error={errors.name}
+        />
+        <Input
+          label="Index"
+          type="number"
+          name="index"
+          onChange={changeHandler}
+          value={userDataInputs.index}
+          error={errors.index}
+        />
         <div className={styles["group-select"]}>
-          <Select label="Group" name="group" value={userDataInputs.group} error={errors.group} options={[1,2,3,4,5]}/>
+          <Select
+            label="Group"
+            name="group"
+            value={userDataInputs.group}
+            error={errors.group}
+            options={[1, 2, 3, 4, 5]}
+          />
         </div>
       </UserForm>
     </div>
@@ -67,3 +67,29 @@ const UserDataPage: React.FC = () => {
 };
 
 export default UserDataPage;
+
+export const action: ActionFunction = async ({ request }) => {
+  const form: FormData = await request.formData();
+  var name: string | undefined = form.get("name")?.toString();
+  const userDataInputs: UserDataClass = new UserDataClass();
+  var errors: UserDataError = new UserDataError();
+  if (name && name.trim() !== "") userDataInputs.name = name!;
+  else errors.name = "Name is required";
+
+  var index: number | null = form.get("index") as number | null;
+  if (index && !(index < 99999 || index > 999999))
+   userDataInputs.index = index!;
+  else errors.index = "Index out of range";
+
+  var group: number | null = form.get("group") as number | null;
+  if (group && !(group < 1 || group > 5))
+    userDataInputs.group = group!;
+  else errors.group = "Group out of range";
+
+  if (errors.name === "" && errors.index === "" && errors.group === "") {
+    store.dispatch(
+      setUserData(userDataInputs)
+    );
+    return redirect("/sign/file");
+  } else return errors;
+};
