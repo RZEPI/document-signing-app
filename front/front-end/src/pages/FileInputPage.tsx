@@ -1,23 +1,18 @@
-import { useNavigate } from "react-router-dom";
-import { useAppDispatch } from "../store/hooks";
+import { ActionFunction, redirect } from "react-router-dom";
+import store from "../store";
 import { setFile as setFileToStore } from "../store/file";
 import FileUpload from "../components/FileUpload";
 
 const FileInputPage: React.FC = () => {
-  const navigation = useNavigate();
-  const dispatch = useAppDispatch();  
-
-  function submitHandler(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const form = new FormData(e.currentTarget);
-    const file = form.get("File to sign") as File;
-    dispatch(setFileToStore(file));
-    navigation("/sign/submit");
-  }
-
   return (
-    <FileUpload onSubmit={submitHandler} fields={["File to sign"]} header="Upload file to signing" />
+    <FileUpload fields={["File to sign"]} header="Upload file to signing" />
   );
 };
 
 export default FileInputPage;
+
+export const action:ActionFunction = async ({request}) => {
+  const formData:FormData = await request.formData();
+  store.dispatch(setFileToStore(formData.get("file-to-sign") as File));
+  return redirect("/sign/submit");
+};

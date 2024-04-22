@@ -4,7 +4,7 @@ from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 
 from user import User, UserType
-from constants import PRIVATE_KEY_FILE, ConvertionType, STORAGE_PATH, KEY_PIN
+from constants import PRIVATE_KEY_FILE, STORAGE_PATH, KEY_PIN
 
 app = Flask(__name__)
 CORS(app)
@@ -55,23 +55,32 @@ def download_xml():
 
 @app.route("/verify", methods=["POST"])
 def verify_signature():
-    file_xml = request.files["xml"]
-    file_doc = request.files["doc"]
+    try:
+        file_xml = request.files["xml"]
+        file_doc = request.files["doc"]
 
-    if file_xml and file_doc:
-        file_xml.save(f"{STORAGE_PATH}{file_xml.filename}")
-        file_doc.save(f"{STORAGE_PATH}{file_doc.filename}")
-        user.set_doc(file_doc.filename)
+        file_name = file_doc.filename
 
-        is_doc_vaild = user.verify_signature()
-    else:
-        return jsonify({"message": "No files provided"}), 400
+        file_xml_name = file_name.split(".")[0] + "_signature.xml"
+        
+
+        if file_xml and file_doc:
+            file_xml.save(f"{STORAGE_PATH}{file_xml_name}")
+            file_doc.save(f"{STORAGE_PATH}{file_name}")
+            user.set_doc(file_name)
+
+            is_doc_vaild = user.verify_signature()
+        else:
+            return jsonify({"message": "No files provided"}), 400
 
 
-    if is_doc_vaild:
-        return jsonify({"message": "Signature is valid"}), 200
-    else:
-        return jsonify({"message": "Signature is invalid"}), 400
+        if is_doc_vaild:
+            return jsonify({"message": "Signature is valid"}), 200
+        else:
+            return jsonify({"message": "Signature is invalid"}), 400
+    except Exception as e:
+        print(e)
+        return jsonify({"message": str(e)}), 400
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

@@ -38,7 +38,7 @@ class User:
     def set_doc(self, file_name):
         self.file_name = file_name
         self.file_path = f"{STORAGE_PATH}{file_name}"
-        self.file_data_path = f"{STORAGE_PATH}{file_name}_signature.xml"
+        self.file_data_path = f"{STORAGE_PATH}{file_name.split('.')[0]}_signature.xml"
         with open(self.file_path, "rb") as file:
             self.doc = file.read()
 

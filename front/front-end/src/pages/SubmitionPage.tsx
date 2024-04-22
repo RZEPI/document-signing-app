@@ -30,7 +30,7 @@ const SubmitionPage: React.FC = () => {
         <p>Group: {userData.group}</p>
       </PreviewBox>
       <PreviewBox header="File for signing">
-        <FileIcon file_name={fileProvided ? fileProvided.name : ""}/>
+        <FileIcon fileName={fileProvided ? fileProvided.name : ""}/>
       </PreviewBox>
       <button className={styles["sign-button"]} onClick={handleButtonClick} disabled={isSending}>{isSending ? "Sending..." : "Sign"}</button>
     </div>

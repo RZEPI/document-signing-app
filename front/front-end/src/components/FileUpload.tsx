@@ -1,4 +1,5 @@
 import { useState } from "react";
+import {Form} from "react-router-dom"
 import { LabeledFile } from "../models/LabeledFile";
 
 import styles from "../styles/FileUpload.module.css";
@@ -7,10 +8,9 @@ import FileInput from "./form inputs/FileInput";
 import FileIcon from "./FileIcon";
 
 const FileUpload: React.FC<{
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   fields: string[];
   header: string;
-}> = ({ onSubmit, fields, header }) => {
+}> = ({fields, header }) => {
   const fieldCount: number = fields.length;
 
   const [files, setFiles] = useState<LabeledFile[] | null>(null);
@@ -22,14 +22,14 @@ const FileUpload: React.FC<{
     <>
       <h1>{header}</h1>
       <div className={styles["file-input-container"]}>
-        <form className={form_status} onSubmit={onSubmit}>
-          {fields.map((field) => {
+        <Form className={form_status} method="post" encType="multipart/form-data">
+          {fields.map((field, fieldIndex) => {
             return (
-              <div className={styles["form-row"]}>
+              <div className={styles["form-row"]} key={fieldIndex}>
                 <FileInput setFile={setFiles} label={field} key={field} />
                 {files && files.find((file) => file.label === field) && (
                   <div className={styles["file-preview"]}>
-                    <FileIcon file_name={files.find((file) => file.label === field)?.file.name!} />
+                    <FileIcon fileName={files.find((file) => file.label === field)?.file.name!}  />
                   </div>
                 )}
               </div>
@@ -40,7 +40,7 @@ const FileUpload: React.FC<{
               Submit
             </button>
           )}
-        </form>
+        </Form>
       </div>
     </>
   );

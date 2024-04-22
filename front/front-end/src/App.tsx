@@ -4,10 +4,10 @@ import PageLayout from "./pages/PageLayout";
 import StartingPage from "./pages/StartingPage";
 import PendriveUnlockPage, {action as pinVerificationAction} from "./pages/PendriveUnlockPage";
 import UserDataPage, {action as UserDataSaveAction } from "./pages/UserDataPage";
-import FileInputPage from "./pages/FileInputPage";
+import FileInputPage, { action as fileSavingAction } from "./pages/FileInputPage";
 import SubmitionPage, {action as fileSigningAction} from "./pages/SubmitionPage";
 import DownloadPage, {loader as filesLoader } from "./pages/DownloadPage";
-import VerficationPage from "./pages/VerificationPage";
+import VerficationPage, {action as verifySignatureAction} from "./pages/VerificationPage";
 
 const router = createBrowserRouter([
   {
@@ -33,7 +33,8 @@ const router = createBrowserRouter([
           },
           {
             path: "file",
-            element: <FileInputPage />
+            element: <FileInputPage />,
+            action: fileSavingAction
           },
           {
             path: "submit",
@@ -50,12 +51,8 @@ const router = createBrowserRouter([
       },
       {
         path: "verify",
-        children: [
-          {
-            path: "start",
-            element: <VerficationPage />
-          }
-        ]
+        element: <VerficationPage />,
+        action: verifySignatureAction
       }
     ],
   },

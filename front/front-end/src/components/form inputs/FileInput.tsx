@@ -16,18 +16,19 @@ const FileInput: React.FC<{
         return [...prevFiles, insertedFile];
       });
   }
+  const inputName = label.toLowerCase().replace(/ /g, "-",);
 
   return (
     <>
       <h2 className={styles["file-input-header"]}>{`${label}:`}</h2>
       <input
         type="file"
-        id={label}
-        name={label}
+        id={inputName}
+        name={inputName}
         className={styles["input-file"]}
         onChange={handleFileChange}
       />
-      <label htmlFor={label}>Upload file</label>
+      <label htmlFor={inputName}>Upload file</label>
     </>
   );
 };
