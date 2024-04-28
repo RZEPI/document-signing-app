@@ -1,3 +1,4 @@
+import {useState} from "react";
 import UserForm from "../components/UserForm";
 import Input from "../components/form inputs/Input";
 import {
@@ -8,24 +9,42 @@ import {
 } from "react-router-dom";
 
 const PendriveUnlockPage: React.FC = () => {
+  const [error, setError] = useState<string>("");
   const actionData = useActionData() as { message: string} | undefined;
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
+
+  function changeHandler(event: React.ChangeEvent<HTMLInputElement>){
+    const onlyNumbers =  /^\d+$/.test(event.target.value);
+    if(event.target.value.length === 0 ){
+      setError("");
+      return
+    }
+    if(event.target.value.length > 4){
+      setError("PIN must have 4 digits");
+      return;
+    }
+    if(!onlyNumbers){
+      setError("PIN must contain only digits");
+      return;
+    }
+    setError("");
+  }
 
   return (
     <>
       <UserForm
         formTitle={"PIN"}
         buttonCaption="Unlock"
-        buttonBlocked={isSubmitting}
+        buttonBlocked={isSubmitting && !error}
       >
         <Input
           label="PIN"
-          type="number"
+          type="password"
           name="pin"
-          onChange={() => {}}
+          onChange={changeHandler}
           value={undefined}
-          error={actionData ? actionData?.message : ""}
+          error={actionData ? actionData?.message : error}
         />
       </UserForm>
     </>

@@ -26,6 +26,9 @@ def save_file(file):
     file.save(file_path)
     return file_path
 
+def delete_file(file_path):
+    if os.path.exists(file_path):
+        os.remove(file_path)
 
 def parse_operation(operation: str):
     operation = operation.replace('"', '')
@@ -93,12 +96,14 @@ def verify_signature():
         else:
             return jsonify({"message": "No files provided"}), 400
 
+        delete_file(user.file_path)
+        delete_file(user.file_data_path)
+
         if is_doc_vaild:
             return jsonify({"message": "Signature is valid"}), 200
         else:
             return jsonify({"message": "Signature is invalid"}), 400
     except Exception as e:
-        print(e)
         return jsonify({"message": str(e)}), 400
 
 
@@ -118,8 +123,7 @@ def encrypt_file():
             else:
                 return jsonify({"message": "No file name provided"}), 400
     except Exception as e:
-        if file_path:
-            os.remove(file_path)
+        delete_file(file_path)
         return jsonify({"message": str(e)}), 400
 
 

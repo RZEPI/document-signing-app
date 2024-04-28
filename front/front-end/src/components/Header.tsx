@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import styles from "../styles/Header.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,8 +11,10 @@ import { setUserType, getUserType } from "../store/user-type";
 
 
 const Header: React.FC = () => {
+  const navigate = useNavigate();
   function userTypeChangeHandler(userType: UserType) {
     dispatch(setUserType(userType));
+    navigate("/");
   }
 
   var dispatch: AppDispatch = useAppDispatch();
