@@ -2,6 +2,8 @@ import FileUpload from "../components/FileUpload";
 import axios, { AxiosResponse } from "axios";
 import { ActionFunction, redirect, useSearchParams } from "react-router-dom";
 import { makeInputName } from "../util";
+import store from "../store";
+import { send_form } from "../util/http";
 
 const FILE_VERIFY_LABEL = "File to verify";
 const XML_FILE_LABEL = "XML file with neccessary data";
@@ -36,16 +38,10 @@ export const action: ActionFunction = async ({ request }) => {
   const formDataToSend = new FormData();
   formDataToSend.append("xml", xml, "xml.xml");
   formDataToSend.append("doc", file, file.name);
+  const userPort = store.getState().userType.userType as number;
+  const url = `http://localhost:${userPort}/verify`;
   try {
-    const response: AxiosResponse = await axios.post(
-      "http://localhost:5000/verify",
-      formDataToSend,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+    const response: AxiosResponse = await send_form(url, formDataToSend);
     if (response.status === 200) {
       return redirect("/verify?result=success");
     }

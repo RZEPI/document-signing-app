@@ -42,8 +42,7 @@ def parse_operation(operation: str):
 
 @app.route("/pin", methods=["POST"])
 def verify_pin():
-    request_body = request.json
-    pin = request_body.get("pin")
+    pin = request.json
 
     if int(pin) == int.from_bytes(KEY_PIN):
         return jsonify({"message": "Pin is valid"}), 200

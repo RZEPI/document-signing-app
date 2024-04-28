@@ -7,6 +7,8 @@ import {
   ActionFunction,
   redirect,
 } from "react-router-dom";
+import { send_json } from "../util/http";
+
 
 const PendriveUnlockPage: React.FC = () => {
   const [error, setError] = useState<string>("");
@@ -55,15 +57,12 @@ export default PendriveUnlockPage;
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
-  const pin = formData.get("pin");
+  const pin = formData.get("pin") as string;
+  const pin_number = parseInt(pin);
 
-  const response = await fetch("http://localhost:5000/pin", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ pin }),
-  });
-  if (response.status === 401) {
-    return await response.json();
+  const response = await send_json("http://localhost:5000/pin", pin_number);
+  if (response.status !== 200) {
+    return await response.data;
   }
 
   return redirect("/sign/data");

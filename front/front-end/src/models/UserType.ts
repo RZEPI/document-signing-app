@@ -1,4 +1,4 @@
 export enum UserType {
-    User_a = 1,
-    User_b = 2
+    User_a = 5000,
+    User_b = 5001
 }

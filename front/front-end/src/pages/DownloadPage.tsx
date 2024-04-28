@@ -5,6 +5,8 @@ import styles from "../styles/DownloadPage.module.css";
 import PreviewBox from "../components/PreviewBox";
 import DownloadLink from "../components/DownloadLink";
 import { DownloadFile } from "../models/DownloadFile";
+import { get_file } from "../util/http";
+import store from "../store";
 
 const DownloadPage: React.FC<{header:string, loaderId:string}> = ({header, loaderId}) => {
   const files = useRouteLoaderData(loaderId) as DownloadFile[];
@@ -30,15 +32,8 @@ const DownloadPage: React.FC<{header:string, loaderId:string}> = ({header, loade
 export default DownloadPage;
 
 export async function loader(): Promise<DownloadFile[]> {
-  const responseSigned = await axios.get(
-    "http://localhost:5000/download/signed",
-    {
-      responseType: "blob",
-    }
-  );
-  const responseXml = await axios.get("http://localhost:5000/download/xml", {
-    responseType: "blob",
-  });
+  const responseSigned = await get_file("http://localhost:5000/download/signed");
+  const responseXml = await get_file("http://localhost:5000/download/xml");
 
   const files: DownloadFile[] = [ {
     file: responseSigned.data,
@@ -54,9 +49,8 @@ export const loaderCrypto:LoaderFunction = async ({params}) => {
   const filename = params.filename as string;
   const operation = params.operation as string;
 
-  const response = await axios.get(`http://localhost:5000/crypto?filename=${filename}`, {
-      responseType: "blob",
-  });
+  const userPort = store.getState().userType.userType as number;
+  const response = await get_file(`http://localhost:${userPort}/crypto?filename=${filename}`);
   
   const files:DownloadFile[] = [
     {
