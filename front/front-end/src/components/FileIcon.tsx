@@ -5,7 +5,7 @@ import styles from "../styles/FileIcon.module.css";
 const FileIcon: React.FC<{fileName:string}> = ({fileName}) => {
     return(<div className={styles["file-icon"]}>
         <FontAwesomeIcon icon={faFile} />
-        <span>&nbsp;&nbsp;{fileName.slice(0, 20)}</span>
+        <span>&nbsp;&nbsp;{fileName.slice(0, 13) + "..."}</span>
     </div>);
 }
 

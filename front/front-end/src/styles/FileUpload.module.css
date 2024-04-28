@@ -16,7 +16,6 @@
 
 .file-preview {
   display: flex;
-  width: 20vw;
   justify-content: center;
   align-items: center;
 }
@@ -40,6 +39,7 @@
 .form-row {
   display: grid;
   place-items: center;
+  width: 100%;
   grid-template-columns: 1fr 1fr 1fr;
   grid-gap: 1em;
 }
