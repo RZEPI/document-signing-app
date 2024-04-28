@@ -10,10 +10,7 @@ const userDataSlice = createSlice({
     initialState,
     reducers: {
         setUserData(state, action: PayloadAction<UserData>) {
-            state.name = action.payload.name;
-            state.index = action.payload.index;
-            state.group = action.payload.group;
-            return state;
+            return {...action.payload};
         },
     },
 });

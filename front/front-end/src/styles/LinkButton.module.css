@@ -1,15 +1,27 @@
 .link-button {
-  height: 4vh;
-  min-width: 8vw;
-  max-width: 14vw;
+  height: 6vh;
   width: 12vw;
   font-weight: 700;
   color: #fff;
   background-color: #000;
-  font-size: 1.2em;
+  font-size: 1.1em;
   margin: 2em 0.75em;
   padding: 0.7em;
   border-radius: 0.6em;
+}
+
+@media (max-height: 900px) {
+  .link-button {
+    height: 9vh;
+  }
+  
+}
+
+@media (max-height: 800px) {
+  .link-button {
+    font-size: 0.7em;
+  }
+  
 }
 
 .link-button:hover {

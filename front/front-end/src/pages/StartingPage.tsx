@@ -7,8 +7,8 @@ const StartingPage: React.FC = () => {
       <h1 style={{textAlign: "center"}}>Choose your action</h1>
       <div className={styles["action-contaiener"]}>
         <LinkButton to="/sign/pin">Sign document</LinkButton>
-        <LinkButton to="/verify/start">Verify document</LinkButton>
-        <LinkButton to="/">Encrypt/Decrypt <br/> document</LinkButton>
+        <LinkButton to="/verify">Verify document</LinkButton>
+        <LinkButton to="/crypt-op/Encryption">Encrypt/Decrypt <br/> document</LinkButton>
       </div>
     </>
   );

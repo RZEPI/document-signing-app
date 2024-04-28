@@ -1,5 +1,6 @@
 import styles from "../../styles/FileInput.module.css";
 import { LabeledFile } from "../../models/LabeledFile";
+import { makeInputName } from "../../util";
 
 const FileInput: React.FC<{
   setFile: React.Dispatch<React.SetStateAction<LabeledFile[] | null>>;
@@ -16,8 +17,7 @@ const FileInput: React.FC<{
         return [...prevFiles, insertedFile];
       });
   }
-  const inputName = label.toLowerCase().replace(/ /g, "-",);
-
+  const inputName = makeInputName(label);
   return (
     <>
       <h2 className={styles["file-input-header"]}>{`${label}:`}</h2>
