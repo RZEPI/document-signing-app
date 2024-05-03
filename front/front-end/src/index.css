@@ -23,3 +23,24 @@ h1{
 .main-content-container h1{
   text-align: center;
 }
+
+.group-select
+{
+    display: flex;
+    flex-direction: row !important;
+    width: 14vw;
+}
+
+.group-select select
+{
+    font-size: 1.5em;
+    width: 7vw;
+    border-radius: 0.3em;
+    border-width: 3px;
+    padding: 0.3em;
+}
+
+.group-select label
+{
+    margin-left: 0;
+}

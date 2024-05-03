@@ -17,6 +17,7 @@ const DownloadPage: React.FC<{header:string, loaderId:string}> = ({header, loade
           <>
             {files.map((file) => (
               <DownloadLink
+                key={file.caption}
                 url={URL.createObjectURL(file.file)}
                 caption={file.caption}
                 download={file.filename}

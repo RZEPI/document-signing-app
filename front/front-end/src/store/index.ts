@@ -1,15 +1,18 @@
-import {configureStore} from '@reduxjs/toolkit';
-import userTypeReducer from './user-type';
-import userDataReducer from './user-data';
-import fileReducer from './file';
+import { configureStore } from "@reduxjs/toolkit";
+import userTypeReducer from "./user-type";
+import userDataReducer from "./user-data";
+import fileReducer from "./file";
 
 const store = configureStore({
-    reducer:
-    {
-        userType: userTypeReducer,
-        userData: userDataReducer,
-        file: fileReducer
-    }
+  reducer: {
+    userType: userTypeReducer,
+    userData: userDataReducer,
+    file: fileReducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false
+    }),
 });
 
 export default store;

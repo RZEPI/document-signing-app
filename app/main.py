@@ -42,7 +42,15 @@ def parse_operation(operation: str):
 
 @app.route("/pin", methods=["POST"])
 def verify_pin():
-    pin = request.json
+    obtained_object = request.json
+    pin = obtained_object["pin"]
+    pendrive_path = obtained_object["pendrive"].replace("/", "\\")
+
+    if pendrive_path.endswith("\\"):
+        private_key_path = f"{pendrive_path}{PRIVATE_KEY_FILE}"
+        user.load_private_key(private_key_path, pin.to_bytes(4))
+    else:
+        return jsonify({"message": "Invalid pendrive path"}), 400
 
     if int(pin) == int.from_bytes(KEY_PIN):
         return jsonify({"message": "Pin is valid"}), 200
@@ -59,7 +67,8 @@ def sign_file():
         file.save(file_path)
         user.set_doc(file.filename)
         user.user_data = user_data
-        user.sign_doc(PRIVATE_KEY_FILE, password=KEY_PIN)
+        
+        user.sign_doc()
 
         return jsonify({"message": "Document signed"}), 200
     else:

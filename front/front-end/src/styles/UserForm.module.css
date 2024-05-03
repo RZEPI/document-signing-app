@@ -26,7 +26,6 @@
     width: 14vw;
 }
 
-
 .form input
 {
     width: 100%;
@@ -46,27 +45,6 @@
     margin: 0.5em;
 }
 
-
-.group-select select
-{
-    font-size: 1.5em;
-    width: 7vw;
-    border-radius: 0.3em;
-    border-width: 3px;
-    padding: 0.3em;
-}
-
-.group-select label
-{
-    margin-left: 0;
-}
-
-.form .group-select
-{
-    display: flex;
-    flex-direction: row;
-    width: 14vw;
-}
 .form button {
     font-size: 1.5em;
     width: 7vw;

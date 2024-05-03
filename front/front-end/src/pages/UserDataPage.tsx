@@ -1,5 +1,10 @@
-import { useState,useEffect } from "react";
-import { ActionFunction, useNavigation, useActionData, redirect } from "react-router-dom";
+import { useState, useEffect } from "react";
+import {
+  ActionFunction,
+  useNavigation,
+  useActionData,
+  redirect,
+} from "react-router-dom";
 
 import styles from "../styles/UserForm.module.css";
 import UserForm from "../components/UserForm";
@@ -16,8 +21,12 @@ const UserDataPage: React.FC = () => {
   var actionData = useActionData() as UserDataError | undefined;
   const isSubmitting = useNavigation().state === "submitting";
   const userData = useAppSelector(getUserData);
-  const [errors, setErrors] = useState<UserDataError>(actionData ?? new UserDataError());
-  const [userDataInputs, setUserDataInputs] = useState<UserDataType>({...userData});
+  const [errors, setErrors] = useState<UserDataError>(
+    actionData ?? new UserDataError()
+  );
+  const [userDataInputs, setUserDataInputs] = useState<UserDataType>({
+    ...userData,
+  });
 
   useEffect(() => {
     setErrors(actionData ?? new UserDataError());
@@ -35,7 +44,11 @@ const UserDataPage: React.FC = () => {
 
   return (
     <div className={styles["form-container"]}>
-      <UserForm formTitle={"Your data"} buttonCaption={"Save"} buttonBlocked={isSubmitting}>
+      <UserForm
+        formTitle={"Your data"}
+        buttonCaption={"Save"}
+        buttonBlocked={isSubmitting}
+      >
         <Input
           label="Name"
           type="text"
@@ -52,15 +65,13 @@ const UserDataPage: React.FC = () => {
           value={userDataInputs.index}
           error={errors.index}
         />
-        <div className={styles["group-select"]}>
-          <Select
-            label="Group"
-            name="group"
-            value={userDataInputs.group}
-            error={errors.group}
-            options={[1, 2, 3, 4, 5]}
-          />
-        </div>
+        <Select
+          label="Group"
+          name="group"
+          value={userDataInputs.group}
+          error={errors.group}
+          options={[1, 2, 3, 4, 5]}
+        />
       </UserForm>
     </div>
   );
@@ -78,18 +89,15 @@ export const action: ActionFunction = async ({ request }) => {
 
   var index: number | null = form.get("index") as number | null;
   if (index && !(index < 99999 || index > 999999))
-   userDataInputs.index = index!;
+    userDataInputs.index = index!;
   else errors.index = "Index out of range";
 
   var group: number | null = form.get("group") as number | null;
-  if (group && !(group < 1 || group > 5))
-    userDataInputs.group = group!;
+  if (group && !(group < 1 || group > 5)) userDataInputs.group = group!;
   else errors.group = "Group out of range";
 
   if (errors.name === "" && errors.index === "" && errors.group === "") {
-    store.dispatch(
-      setUserData({...userDataInputs})
-    );
+    store.dispatch(setUserData({ ...userDataInputs }));
     return redirect("/sign/file");
   } else return errors;
 };

@@ -16,7 +16,13 @@ from cryptography.hazmat.primitives.serialization import (
 from cryptography.exceptions import InvalidSignature
 from cryptography.fernet import Fernet
 
-from constants import DEFAULT_USER_DATA, PUBLIC_KEY_FILE, FERNET_FILE, STORAGE_PATH, ConvertionType
+from constants import (
+    DEFAULT_USER_DATA,
+    PUBLIC_KEY_FILE,
+    FERNET_FILE,
+    STORAGE_PATH,
+    ConvertionType,
+)
 
 
 class UserType(Enum):
@@ -26,6 +32,7 @@ class UserType(Enum):
 
 class User:
     file_name = None
+    private_key = None
 
     def __init__(
         self,
@@ -46,9 +53,10 @@ class User:
         def wrapper(self, *args, **kwargs):
             if not self.file_name:
                 raise Exception("No file provided")
-        
+
             ret_val = method(self, *args, **kwargs)
             return ret_val
+
         return wrapper
 
     @staticmethod
@@ -79,12 +87,9 @@ class User:
 
         return public_key
 
-    @staticmethod
-    def load_private_key(private_key_file, password=None):
+    def load_private_key(self, private_key_file, password=None):
         with open(private_key_file, "rb") as file:
-            private_key = load_pem_private_key(file.read(), password=password)
-
-        return private_key
+            self.private_key = load_pem_private_key(file.read(), password=password)
 
     @staticmethod
     def load_file_content(file_path):
@@ -119,23 +124,25 @@ class User:
         return new_file_path
 
     @check_file
-    def sign_doc(self, private_key_file, password=None):
+    def sign_doc(self):
         if self.type == UserType.USER_B:
             raise Exception("User B cannot sign doc")
         if not self.file_name:
             raise Exception("No file provided")
 
-        private_key = self.load_private_key(private_key_file, password=password)
-
-        signature = private_key.sign(
-            self.doc,
-            padding.PSS(
-                mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.MAX_LENGTH
-            ),
-            hashes.SHA256(),
-        )
-        self._save_signature(signature)
-        self.store_public_key(private_key.public_key())
+        if self.private_key:
+            signature = self.private_key.sign(
+                self.doc,
+                padding.PSS(
+                    mgf=padding.MGF1(hashes.SHA256()),
+                    salt_length=padding.PSS.MAX_LENGTH,
+                ),
+                hashes.SHA256(),
+            )
+            self._save_signature(signature)
+            self.store_public_key(self.private_key.public_key())
+        else:
+            raise Exception("No private key provided")
 
     @check_file
     def get_document_data(self):
@@ -144,7 +151,12 @@ class User:
         mod_date_timestamp = os.path.getmtime(self.file_path)
         mod_date = datetime.fromtimestamp(mod_date_timestamp).isoformat()
 
-        return {"size": size, "extension": extension, "mod_date": mod_date, "name": self.file_name}
+        return {
+            "size": size,
+            "extension": extension,
+            "mod_date": mod_date,
+            "name": self.file_name,
+        }
 
     @check_file
     def _save_signature(self, signature):
